@@ -13,6 +13,8 @@ public class Produto {
         this.descricao = descricao;
     }
 
+    public Produto(){};
+
     public int getId() {
         return id;
     }

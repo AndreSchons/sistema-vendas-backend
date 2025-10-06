@@ -1,17 +1,17 @@
-package com.schons.vendas.model;
+package com.schons.vendas.dto.response;
 
-public class Cliente {
-
+public class ClienteResponse {
+    
     private int id;
     private String nome;
     private String email;
 
-    public Cliente(String nome, String email){
+    public ClienteResponse(String nome, String email){
         this.nome = nome;
         this.email = email;
     }
 
-    public Cliente(){};
+    public ClienteResponse(){};
 
     public int getId() {
         return id;
@@ -31,6 +31,4 @@ public class Cliente {
     public void setEmail(String email) {
         this.email = email;
     }
-
-    
 }

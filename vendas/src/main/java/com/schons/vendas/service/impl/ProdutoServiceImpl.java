@@ -39,8 +39,12 @@ public class ProdutoServiceImpl implements ProdutoService {
     }
 
     @Override
-    public void deleteById(int id){
-        produtoDAO.deleteById(id);
+    public boolean deleteById(int id){
+        boolean removido = produtoDAO.deleteById(id);
+        if(!removido){
+            return false;
+        }
+        return true;
     }
 
     @Override

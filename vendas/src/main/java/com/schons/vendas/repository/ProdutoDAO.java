@@ -9,7 +9,7 @@ public interface ProdutoDAO {
 
     Produto salvar(Produto produto);
     List<Produto> listarTodos();
-    void deleteById(int id);
+    boolean deleteById(int id);
     Optional<Produto> getById(int id);
     Produto atualizar(int id, Produto produto);
 }

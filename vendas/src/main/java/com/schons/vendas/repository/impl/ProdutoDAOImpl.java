@@ -44,13 +44,17 @@ public class ProdutoDAOImpl implements ProdutoDAO {
     }
 
     @Override
-    public void deleteById(int id){
+    public boolean deleteById(int id){
         String sql = "DELETE FROM produtos WHERE id = ?";
-        jdbcTemplate.update(sql, id);
+        int rowsAffected = jdbcTemplate.update(sql, id);
+        if(rowsAffected != 0){
+            return true;
+        }
+        return false;
     }
 
     public Optional<Produto> getById(int id){
-        String sql = "SELECT * FROM rodutos WHERE id = ?";
+        String sql = "SELECT * FROM produtos WHERE id = ?";
         try {
             Produto produto = jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(Produto.class),id);
             return Optional.of(produto);

@@ -13,6 +13,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import com.schons.vendas.repository.ProdutoDAO;
+import com.schons.vendas.exception.ProdutoNotFoundException;
 import com.schons.vendas.model.Produto;
 
 @Repository
@@ -73,7 +74,7 @@ public class ProdutoDAOImpl implements ProdutoDAO {
                 """;
         int rowsAffected = jdbcTemplate.update(sql, produto.getNome(), produto.getDescricao(),produto.getPreco(), id);
         if(rowsAffected == 0){
-            throw new RuntimeException("Produto nao encontrado");
+            throw new ProdutoNotFoundException("Produto nao encontrado");
         }
         produto.setId(id);
         return produto;

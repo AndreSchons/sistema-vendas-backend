@@ -1,8 +1,9 @@
 package com.schons.vendas.dto;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.schons.vendas.model.ItemPedido;
 
 public class PedidoDTO {
@@ -10,15 +11,18 @@ public class PedidoDTO {
     private int id;
     private int clienteId;
     private List<ItemPedido> produtos;
-    private Date data;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate data;
     private double valorTotal;
 
-    public PedidoDTO(int clienteId, List<ItemPedido> produtos, Date data, double valorTotal){
+    public PedidoDTO(int clienteId, List<ItemPedido> produtos, LocalDate data, double valorTotal){
         this.clienteId = clienteId;
         this.produtos = produtos;
         this.data = data;
         this.valorTotal = produtos.stream().mapToDouble(item -> item.getValor_unitario() * item.getQuantidade()).sum();
     }
+
+    public PedidoDTO(){};
 
     public int getId() {
         return id;
@@ -38,10 +42,10 @@ public class PedidoDTO {
     public void setProdutos(List<ItemPedido> produtos) {
         this.produtos = produtos;
     }
-    public Date getDate() {
+    public LocalDate getData() {
         return data;
     }
-    public void setDate(Date date) {
+    public void setData(LocalDate date) {
         this.data = date;
     }
     public double getValorTotal() {

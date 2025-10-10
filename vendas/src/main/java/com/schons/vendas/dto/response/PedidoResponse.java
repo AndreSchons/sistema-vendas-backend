@@ -1,25 +1,26 @@
-package com.schons.vendas.model;
+package com.schons.vendas.dto.response;
 
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 
-public class Pedido {
+import com.schons.vendas.model.ItemPedido;
 
+public class PedidoResponse {
+    
     private int id;
     private int clienteId;
     private List<ItemPedido> produtos;
     private LocalDate data;
     private double valorTotal;
 
-    public Pedido(int clienteId, List<ItemPedido> produtos, LocalDate data, double valorTotal){
+    public PedidoResponse(int clienteId, List<ItemPedido> produtos, LocalDate data, double valorTotal){
         this.clienteId = clienteId;
         this.produtos = produtos;
         this.data = data;
         this.valorTotal = produtos.stream().mapToDouble(item -> item.getValor_unitario() * item.getQuantidade()).sum();
     }
 
-    public Pedido(){};
+    public PedidoResponse(){}
 
     public int getId() {
         return id;
@@ -42,8 +43,8 @@ public class Pedido {
     public LocalDate getData() {
         return data;
     }
-    public void setData(LocalDate data) {
-        this.data = data;
+    public void setData(LocalDate date) {
+        this.data = date;
     }
     public double getValorTotal() {
         return valorTotal;
@@ -52,5 +53,3 @@ public class Pedido {
         this.valorTotal = valorTotal;
     }
 }
-
-

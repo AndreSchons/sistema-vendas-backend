@@ -29,7 +29,7 @@ public class PedidoDAOImpl implements PedidoDAO{
         jdbcTemplate.update(conexao -> {
             PreparedStatement stmt = conexao.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stmt.setInt(1, pedido.getClienteId());
-            stmt.setDate(2, pedido.getDate());
+            stmt.setDate(2, java.sql.Date.valueOf(pedido.getData()));
             stmt.setDouble(3, pedido.getValorTotal());
             return stmt;
         }, keyHolder);
@@ -68,6 +68,25 @@ public class PedidoDAOImpl implements PedidoDAO{
         String sql = "SELECT * FROM pedidos WHERE id = ?";
         try {
             Pedido pedido = jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(Pedido.class),id);
+            return Optional.of(pedido);
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+    }
+
+    public boolean atualizar(int id, Pedido pedido){
+        String sql = "UPDATE pedidos SET cliente_id = ?, data = ?, valor_total = ? WHERE id = ?";
+        int rowsAffected = jdbcTemplate.update(sql, pedido.getClienteId(),
+                                pedido.getData(),
+                                pedido.getValorTotal(),
+                                id);
+        return rowsAffected > 0;
+    }
+
+    public Optional<Pedido> getByClienteId(int clienteId){
+        String sql = "SELECT * FROM pedidos WHERE cliente_id = ?";
+        try {
+            Pedido pedido = jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(Pedido.class),clienteId);
             return Optional.of(pedido);
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();

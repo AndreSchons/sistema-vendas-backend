@@ -10,4 +10,6 @@ public interface PedidoService {
     List<PedidoDTO> listarTodos();
     boolean deleteById(int id);
     Optional<PedidoDTO> getById(int id);
+    boolean atualizar(int id, PedidoDTO pedidoDTO);
+    Optional<PedidoDTO> getByClienteId(int clienteId);
 }

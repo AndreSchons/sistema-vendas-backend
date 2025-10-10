@@ -1,6 +1,7 @@
 package com.schons.vendas.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
@@ -11,6 +12,7 @@ import javax.print.attribute.standard.Media;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -134,5 +136,27 @@ public class ProdutoControllerTest {
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
         .andExpect(MockMvcResultMatchers.jsonPath("$.nome").value("Panela"));
+    }
+
+    @Test
+    public void deve_retornar_o_produto_atualizado_e_codigo_200() throws Exception{
+        //Arrange
+        ProdutoDTO produtoDTO = new ProdutoDTO();
+        produtoDTO.setNome("Bicicleta");
+        produtoDTO.setId(1);
+
+        String json = new ObjectMapper().writeValueAsString(produtoDTO);
+
+        when(produtoServiceImpl.getById(1)).thenReturn(produtoDTO);
+        when(produtoServiceImpl.atualizar(eq(produtoDTO.getId()), any(ProdutoDTO.class))).thenReturn(produtoDTO);
+
+        var requestBuilder = MockMvcRequestBuilders.put("/produtos/{id}",1)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(json);
+        //Act + Assert
+        this.mockMvc.perform(requestBuilder)
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.nome").value("Bicicleta"));
     }
 }

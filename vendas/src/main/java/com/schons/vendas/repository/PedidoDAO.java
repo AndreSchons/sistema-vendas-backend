@@ -10,4 +10,6 @@ public interface PedidoDAO {
     List<Pedido> listarTodos();
     boolean deleteById(int id);
     Optional<Pedido> getById(int id);
+    boolean atualizar(int id, Pedido pedido);
+    Optional<Pedido> getByClienteId(int clienteId);
 }

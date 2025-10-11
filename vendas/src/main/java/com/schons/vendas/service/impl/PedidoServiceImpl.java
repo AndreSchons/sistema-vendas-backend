@@ -61,8 +61,10 @@ public class PedidoServiceImpl implements PedidoService {
         return pedidoDAO.atualizar(id, pedido);
     }
 
-    public Optional<PedidoDTO> getByClienteId(int clienteId){
-        return pedidoDAO.getByClienteId(clienteId).map(pedido -> modelMapper.map(pedido, PedidoDTO.class));
+    public List<PedidoDTO> getByClienteId(int clienteId){
+        return pedidoDAO.getByClienteId(clienteId).stream()
+        .map(pedido -> modelMapper.map(pedido, PedidoDTO.class))
+        .collect(Collectors.toList());
     }
     
 

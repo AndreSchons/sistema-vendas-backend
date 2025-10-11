@@ -11,5 +11,5 @@ public interface PedidoService {
     boolean deleteById(int id);
     Optional<PedidoDTO> getById(int id);
     boolean atualizar(int id, PedidoDTO pedidoDTO);
-    Optional<PedidoDTO> getByClienteId(int clienteId);
+    List<PedidoDTO> getByClienteId(int clienteId);
 }

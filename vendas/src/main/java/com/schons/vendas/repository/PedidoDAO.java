@@ -11,5 +11,5 @@ public interface PedidoDAO {
     boolean deleteById(int id);
     Optional<Pedido> getById(int id);
     boolean atualizar(int id, Pedido pedido);
-    Optional<Pedido> getByClienteId(int clienteId);
+    List<Pedido> getByClienteId(int clienteId);
 }

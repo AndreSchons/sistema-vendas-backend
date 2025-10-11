@@ -1,14 +1,17 @@
 package com.schons.vendas.controller;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import com.schons.vendas.service.impl.ProdutoServiceImpl;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,6 +54,37 @@ public class PedidoController {
     public ResponseEntity<Boolean> deleteById(@PathVariable int id){
         if(pedidoServiceImpl.deleteById(id) == true){
             return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Optional<PedidoResponse>> getById(@PathVariable int id){
+        Optional<PedidoDTO> pedidoOpt = pedidoServiceImpl.getById(id);
+        if(pedidoOpt.isPresent()){
+            return ResponseEntity.ok(pedidoOpt.map(pedido -> modelMapper.map(pedido, PedidoResponse.class)));
+        }
+        return ResponseEntity.of(Optional.empty());
+    }
+
+    @GetMapping("/cliente/{id}")
+    public ResponseEntity<List<PedidoResponse>> getByClienteId(@PathVariable int id){
+        List<PedidoDTO> pedidos = pedidoServiceImpl.getByClienteId(id);
+        if (pedidos.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        List<PedidoResponse> response = pedidos.stream()
+        .map(pedido -> modelMapper.map(pedido, PedidoResponse.class))
+        .collect(Collectors.toList());
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Boolean> atualizar(@PathVariable int id, @RequestBody PedidoRequest pedidoRequest){
+        PedidoDTO pedidoDTO = modelMapper.map(pedidoRequest, PedidoDTO.class);
+        boolean atualizado = pedidoServiceImpl.atualizar(id, pedidoDTO);
+        if(atualizado){
+            return ResponseEntity.ok().build();
         }
         return ResponseEntity.notFound().build();
     }

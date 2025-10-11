@@ -15,6 +15,8 @@ public class ItemPedido {
         this.pedidoId = pedidoId;
     }
 
+    public ItemPedido(){};
+
     public int getId() {
         return id;
     }

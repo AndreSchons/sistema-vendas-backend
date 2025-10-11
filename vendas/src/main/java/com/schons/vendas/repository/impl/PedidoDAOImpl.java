@@ -52,7 +52,14 @@ public class PedidoDAOImpl implements PedidoDAO{
 
     public List<Pedido> listarTodos(){
         String sql = "SELECT * FROM pedidos";
-        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Pedido.class));
+        List<Pedido> pedidos = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Pedido.class));
+
+        String sqlItens = "SELECT * FROM itempedido WHERE pedido_id = ?";
+        for(Pedido pedido : pedidos){
+            List<ItemPedido> itens = jdbcTemplate.query(sqlItens, new BeanPropertyRowMapper<>(ItemPedido.class),pedido.getId());
+            pedido.setProdutos(itens);
+        }
+        return pedidos;
     }
 
     public boolean deleteById(int id){
@@ -62,12 +69,15 @@ public class PedidoDAOImpl implements PedidoDAO{
             return true;
         }
         return false;
-    }
+    } 
 
     public Optional<Pedido> getById(int id){
         String sql = "SELECT * FROM pedidos WHERE id = ?";
         try {
             Pedido pedido = jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(Pedido.class),id);
+            String sqlItem = "SELECT * FROM itempedido WHERE pedido_id = ?";
+            List<ItemPedido> itens = jdbcTemplate.query(sqlItem, new BeanPropertyRowMapper<>(ItemPedido.class),id);
+            pedido.setProdutos(itens);
             return Optional.of(pedido);
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
@@ -80,16 +90,29 @@ public class PedidoDAOImpl implements PedidoDAO{
                                 pedido.getData(),
                                 pedido.getValorTotal(),
                                 id);
-        return rowsAffected > 0;
+        if(rowsAffected == 0){
+            return false;
+        }
+
+        String sqlDelete = "DELETE FROM itempedido WHERE pedido_id = ?";
+        jdbcTemplate.update(sqlDelete, id);
+
+        String sqlInser = "INSERT INTO itempedido (produto_id, pedido_id, quantidade, valor_unitario) VALUES (?,?,?,?)";
+        for(ItemPedido item : pedido.getProdutos()){
+            jdbcTemplate.update(sqlInser, item.getProdutoId(), id, item.getQuantidade(), item.getValorUnitario());
+        }
+        return true;
     }
 
-    public Optional<Pedido> getByClienteId(int clienteId){
+    public List<Pedido> getByClienteId(int clienteId){
         String sql = "SELECT * FROM pedidos WHERE cliente_id = ?";
-        try {
-            Pedido pedido = jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(Pedido.class),clienteId);
-            return Optional.of(pedido);
-        } catch (EmptyResultDataAccessException e) {
-            return Optional.empty();
+        List<Pedido> pedidos = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Pedido.class), clienteId);
+
+        String sqlItem = "SELECT * FROM itempedido WHERE pedido_id = ?";
+        for(Pedido pedido : pedidos){
+            List<ItemPedido> itens = jdbcTemplate.query(sqlItem, new BeanPropertyRowMapper<>(ItemPedido.class),pedido.getId());
+            pedido.setProdutos(itens);
         }
+        return pedidos;
     }
 }
